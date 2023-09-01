@@ -44,6 +44,7 @@
             </a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
                 <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
+                <a class="dropdown-item" href="{% url 'profile' user.pk %}">Profile</a>
             </div>
         </li>
         {% else %}
