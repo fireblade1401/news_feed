@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %} Detail article {% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-md-8">
+            <h1 class="card-title">{{ article.title }}</h1><br>
+            <p class="text-muted">{{ article.author }} | {{ article.published_date }}</p>
+            <p class="text-muted">Category: {{ article.category }}</p>
+            {% if article.image_url %}
+                <img src="{{ article.image_url.url }}" class="btn btn-primary-gradient me-2 mb-2" alt="{{ article.title }}">
+            {% endif %}
+            <p class="text-muted" style="margin-top: 20px">{{ article.summary }}</p>
+            <hr>
+            <div>{{ article.content | safe }}</div>
+            <strong>Tags:</strong>
+            {% for tag in article.tags.all %}
+                <a href="{% url 'get_article_by_tag' tag.id %}">
+                    <span class="badge bg-primary-gradient">#{{ tag.tag_name }}</span>
+                </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer %} {% endblock %}
