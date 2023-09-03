@@ -5,7 +5,7 @@ from accounts.models import CustomUser
 
 
 class Author(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='author')
 
     @property
     def count_posts(self):
@@ -13,6 +13,10 @@ class Author(models.Model):
 
     def __str__(self):
         return self.user.username
+
+    class Meta:
+        verbose_name = 'Авторство'
+        verbose_name_plural = 'Авторы'
 
 
 class Category(models.Model):
@@ -22,12 +26,20 @@ class Category(models.Model):
     def __str__(self):
         return self.category_name
 
+    class Meta:
+        verbose_name = 'Новость'
+        verbose_name_plural = 'Новости'
+
 
 class Tags(models.Model):
     tag_name = models.CharField(max_length=255)
 
     def __str__(self):
         return self.tag_name
+
+    class Meta:
+        verbose_name = 'Тег'
+        verbose_name_plural = 'Теги'
 
 
 class Article(models.Model):
@@ -40,18 +52,27 @@ class Article(models.Model):
     image_url = models.ImageField(upload_to='media', blank=True)
     tags = models.ManyToManyField(Tags)
 
+    def get_absolute_url(self):
+        return reverse('article_detail', args=[str(self.id)])
+
     def __str__(self):
         return self.title
 
     class Meta:
         ordering = ['-published_date']
+        verbose_name = 'Пост'
+        verbose_name_plural = 'Посты'
 
 
 class Comments(models.Model):
     user = models.ForeignKey(Author, on_delete=models.CASCADE)
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
-    text = models.TextField
+    text = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.text
+
+    class Meta:
+        verbose_name = 'Комментарий'
+        verbose_name_plural = 'Комментарии'

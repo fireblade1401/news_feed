@@ -6,6 +6,7 @@ from django.shortcuts import get_object_or_404
 
 from .forms import CustomUserCreationForm
 from .models import CustomUser
+from main.models import Article
 
 
 def index(request):
@@ -22,7 +23,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/')  # Замените 'home' на ваш URL-адрес
+                return redirect('profile', user.id)
     else:
         form = AuthenticationForm()
 
@@ -48,4 +49,5 @@ def register_view(request):
 
 def profile_view(request, pk):
     user = get_object_or_404(CustomUser, pk=pk)
-    return render(request, 'accounts/profile.html', {'user':user})
+    article_list = Article.objects.filter(author__user__id=user.id)
+    return render(request, 'accounts/profile.html', {'user':user, 'article_list': article_list,})

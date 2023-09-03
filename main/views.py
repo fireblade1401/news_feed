@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from .models import Article, Category
-from .forms import ArticleForm, CategoryForm, TagForm
-from django.http import Http404
+from django.views.generic import UpdateView, DeleteView
+from .models import Article, Category, Author
+from .forms import ArticleForm, CategoryForm, TagForm, CommentForm
+from django.http import Http404, HttpResponseRedirect
 
 
 def index(request):
@@ -37,8 +38,21 @@ def get_article_by_tag(request, tag_id):
 
 def detail_article(request, article_id):
     article = get_object_or_404(Article, id=article_id)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.article = article
+            comment.user = request.user.author
+            comment.save()
+            return redirect('article_detail', article_id)
+    else:
+        form = CommentForm()
+
     context = {
         'article': article,
+        'form': form,
     }
 
     return render(request, 'main/detail_article.html', context)
@@ -49,6 +63,7 @@ def add_article(request):
         form = ArticleForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
+
             return redirect('/')
     else:
         form = ArticleForm()
@@ -89,3 +104,30 @@ def add_tag(request):
     }
 
     return render(request, 'main/add_tag.html', context)
+
+
+class NewsUpdateView(UpdateView):
+    model = Article
+    template_name = 'main/edit_article.html'
+    form_class = ArticleForm
+
+
+class NewsDeleteView(DeleteView):
+    model = Article
+    success_url = '/'
+    template_name = 'main/delete_article.html'
+
+
+def add_comment(request, article_id):
+    article = get_object_or_404(Article, id=article_id)
+
+    if request.method == "POST":
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.article = article
+            comment.user = request.user
+            comment.save()
+
+    return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
