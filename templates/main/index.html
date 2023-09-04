@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
-{% block title %}Articles{% endblock title %}
+{% block title %}NewsPaper{% endblock title %}
 <link rel="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
 {% block content %}
 <style>
@@ -12,10 +12,24 @@
         color: black;
         text-decoration: none;
     }
+    .disabled-like-button {
+    cursor: default;  /* Указывает, что элемент неактивен */
+    }
+    .like-icon {
+        width: 20px;  /* Установите ширину, как вам нужно */
+        height: auto;  /* Сохранит пропорции изображения */
+        padding-bottom: 3px;
+    }
+    .like-count {
+    font-weight: bold;
+    margin-right: 5px;
+    font-size: 18px;
+    color: green;
+    }
 </style>
 <div class="row mb-4">
     <div class="col-12">
-        <h2 class="mb-3">Categories</h2>
+        <h2 class="mb-3">Категории</h2>
         <div class="d-flex flex-wrap">
             {% for i in categories %}
             <a href="{% url 'get_article_by_category' i.id %}"
@@ -44,22 +58,26 @@
                 <p class="card-text">{{ article.content|truncatewords:20 }}</p>
                 <p class="card-subtitle text-muted mb-2">Автор: | {{ article.author }} | {{ article.published_date }}</p>
 
-                <p class="tag-container">
-                    <strong>Теги:</strong>
-                    {% for tag in article.tags.all %}
-                        <a href="{% url 'get_article_by_tag' tag.id %}">
-                            <span class="badge bg-primary-gradient">#{{ tag.tag_name }}</span>
-                        </a>
-                    {% endfor %}
-                </p>
-
+                <div class="d-flex justify-content-between align-items-center">
+                    <p class="tag-container">
+                        <strong>Теги:</strong>
+                        {% for tag in article.tags.all %}
+                            <a href="{% url 'get_article_by_tag' tag.id %}">
+                                <span class="badge bg-primary-gradient">#{{ tag.tag_name }}</span>
+                            </a>
+                        {% endfor %}
+                    </p>
+                    <div class="likes-section">
+                        <div class="like-button disabled-like-button">
+                            <img src="{% static 'heart-regular.svg' %}" alt="Like" class="like-icon">
+                            <span class="like-count">{{ article.likes.count }}</span> Нравится
+                        </div>
+                    </div>
+                </div>
             </div>
-
-
         </div>
     </div>
     {% endfor %}
 </div>
-
-
 {% endblock content %}
+

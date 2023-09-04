@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import NewsUpdateView, NewsDeleteView
+from .views import ArticleUpdateView, ArticleDeleteView
 from accounts.views import register_view, login_view, logout_view, profile_view
 
 urlpatterns = [
@@ -17,6 +17,7 @@ urlpatterns = [
     path('', views.index, name="home"),
     path('profile/<int:pk>', profile_view, name="profile"),
     path('add_comment/<int:article_id>/', views.add_comment, name='add_comment'),
-    path('update/<int:pk>/', NewsUpdateView.as_view(), name="news_update"),
-    path('delete/<int:pk>/', NewsDeleteView.as_view(), name="news_delete"),
+    path('update/<int:pk>/', ArticleUpdateView, name="news_update"),
+    path('delete/<int:pk>/', ArticleDeleteView, name="news_delete"),
+    path('like_article/<int:article_id>/', views.like_article, name='like_article')
 ]

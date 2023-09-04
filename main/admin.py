@@ -8,6 +8,4 @@ admin.site.register(Comments)
 admin.site.register(Tags)
 
 
-
-
 # Register your models here.

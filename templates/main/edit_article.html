@@ -35,11 +35,44 @@
 </style>
 
 <div class="container-fluid container-full">
-    <h4>Update Article</h4>
+    <h4>Изменить статью</h4>
     <form action="{% url 'news_update' article.id %}" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         <div class="mb-3">
-            {{ form.as_p }}
+            <div class="mb-3">
+            <label for="id_title" class="form-label">Название</label>
+            {{ form.title }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_summary" class="form-label">Анонс</label>
+            {{ form.summary }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_content" class="form-label">Описание</label>
+            {{ form.content }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_author" class="form-label">Автор</label>
+            {{ form.author }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_category" class="form-label">Категория</label>
+            {{ form.category }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_image_url" class="form-label">Ссылка на изображение</label>
+            {{ form.image_url }}
+        </div>
+
+        <div class="mb-3">
+            <label for="id_tags" class="form-label">Теги</label>
+            {{ form.tags }}
+        </div>
         </div>
         <button class="btn btn-primary" type="submit">Обновить</button>
     </form>

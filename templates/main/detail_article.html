@@ -19,6 +19,42 @@
                 max-width: 100%;
             }
         }
+        .likes-section {
+            display: flex;
+            align-items: center;
+        }
+
+        .like-button {
+            text-decoration: none;
+            color: black;
+            display: flex;
+            align-items: center;
+        }
+
+        .like-button img {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+        }
+
+        .like-count {
+            font-weight: bold;
+            margin-right: 5px;
+            font-size: 18px;
+            color: green;
+        }
+
+        .like-button:hover {
+            text-decoration: none;
+            color: black;
+        }
+
+        .like-icon {
+        width: 20px;  /* Установите ширину, как вам нужно */
+        height: auto;  /* Сохранит пропорции изображения */
+        padding-bottom: 3px;
+        }
+
         </style>
         <div class="row">
             <div class="col-md-8">
@@ -31,18 +67,27 @@
                 <p class="text-muted" style="margin-top: 20px">{{ article.summary }}</p>
                 <hr>
                 <div>{{ article.content | safe }}</div>
-                <strong>Tags:</strong>
+                <strong>Теги:</strong>
                 {% for tag in article.tags.all %}
                     <a href="{% url 'get_article_by_tag' tag.id %}">
                         <span class="badge bg-primary-gradient">#{{ tag.tag_name }}</span>
                     </a>
                 {% endfor %}
-            <div class="d-flex justify-content-end mb-2"> <!-- добавлены классы d-flex и justify-content-end -->
-                <a href="{% url 'news_update' article.id %}" class="btn btn-warning me-2">Изменить пост</a> <!-- добавлен класс me-2 для отступа справа -->
-                <a href="{% url 'news_delete' article.id %}" class="btn btn-danger">Удалить пост</a>
-            </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <div class="likes-section">
+                        <a href="{% url 'like_article' article.id %}" class="like-button">
+                            <img src="{% static 'heart-regular.svg' %}" alt="Like" style="margin-bottom: 3px;">
+                            <span class="like-count">{{ article.likes.count }}</span> Нравится
+                        </a>
+                    </div>
+                    <div>
+                        <a href="{% url 'news_update' article.id %}" class="btn btn-warning me-2">Изменить пост</a>
+                        <a href="{% url 'news_delete' article.id %}" class="btn btn-danger">Удалить пост</a>
+                    </div>
+                </div>
+
             <div class="comments mt-5">
-                <h3>Comments:</h3>
+                <h3>Комментарии:</h3>
                 {% for comment in article.comments_set.all %}
                     <div class="card mb-4 shadow-sm">
                         <div class="card-header py-3">
@@ -57,7 +102,7 @@
 
             <!-- Форма для ввода комментария -->
             <div class="add-comment mt-5">
-                <h3>Add a comment:</h3>
+                <h3>Добавить комментарий:</h3>
                 <form method="post" class="form-group">
                     {% csrf_token %}
                     <div class="input-group mb-3">

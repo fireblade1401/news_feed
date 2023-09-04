@@ -2,6 +2,7 @@ from django.urls import reverse
 from django.db import models
 from django.contrib.auth.models import User
 from accounts.models import CustomUser
+from News.settings import AUTH_USER_MODEL
 
 
 class Author(models.Model):
@@ -51,6 +52,7 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     image_url = models.ImageField(upload_to='media', blank=True)
     tags = models.ManyToManyField(Tags)
+    likes = models.ManyToManyField(CustomUser, related_name='liked_articles', blank=True)
 
     def get_absolute_url(self):
         return reverse('article_detail', args=[str(self.id)])
@@ -76,3 +78,5 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+

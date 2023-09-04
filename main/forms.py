@@ -11,6 +11,7 @@ class ArticleForm(forms.ModelForm):
                               widget=forms.Select(attrs={'class': 'form-control'}))
     tags = ModelMultipleChoiceField(queryset=Tags.objects.all(),
                                     widget=forms.SelectMultiple(attrs={'class': 'form-control'}))
+
     class Meta:
         model = Article
         fields = ['title', 'summary', 'content', 'author', 'category', 'image_url', 'tags']
@@ -18,7 +19,8 @@ class ArticleForm(forms.ModelForm):
         widgets = {
             "title": TextInput(attrs={
                 'class': 'form-control',
-                'placeholder': 'Название статьи'
+                'label': 'Название',
+                'placeholder': 'Название статьи',
             }),
             "summary": TextInput(attrs={
                 'class': 'form-control',
@@ -51,6 +53,17 @@ class CategoryForm(forms.ModelForm):
     class Meta:
         model = Category
         fields = '__all__'
+
+    widgets = {
+        "category_name": Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Название категории'
+        }),
+        "description": Textarea(attrs={
+            'class': 'form-control',
+            'placeholder': 'Описание категории'
+        }),
+    }
 
 
 class TagForm(forms.ModelForm):

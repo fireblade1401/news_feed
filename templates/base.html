@@ -3,8 +3,14 @@
 <html>
 
 <head>
+    <style>
+        .logo-icon {
+    max-width: 60px; /* Задайте желаемую ширину для иконки */
+    height: auto; /* Автоматическая высота для сохранения пропорций */
+    }
+    </style>
     <meta charset="utf-8">
-    <title>{% block title %} Newspaper {% endblock title %}</title>
+    <title>{% block title %} NewsPaper {% endblock title %}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- Bootstrap CSS -->
@@ -17,7 +23,9 @@
     <header class="p-3 mb-3 border-bottom bg-light">
         <div class="container">
             <nav class="navbar navbar-expand-lg navbar-light">
-                <a class="navbar-brand" href="/">Newspaper</a>
+                <a class="navbar-brand" href="/">
+                    <img src="{% static 'favicon.png' %}" alt="#" class="logo-icon">
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                     aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
@@ -29,13 +37,13 @@
     <ul class="navbar-nav ms-auto d-flex align-items-center">
         {% if user.is_authenticated %}
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_article' %}">Add article</a>
+            <a class="nav-link" href="{% url 'add_article' %}">Добавить статью</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_category' %}">Add category</a>
+            <a class="nav-link" href="{% url 'add_category' %}">Добавить категорию</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'add_tag' %}">Add tag</a>
+            <a class="nav-link" href="{% url 'add_tag' %}">Добавить Тег</a>
         </li>
         <li class="nav-item dropdown">
             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button"
@@ -44,16 +52,16 @@
                 {{ user.username }}
             </a>
             <div class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-                <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
-                <a class="dropdown-item" href="{% url 'profile' user.pk %}">Profile</a>
+                <a class="dropdown-item" href="{% url 'profile' user.pk %}">Мой профиль</a>
+                <a class="dropdown-item" href="{% url 'logout' %}">Выйти</a>
             </div>
         </li>
         {% else %}
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'login' %}">Login</a>
+            <a class="nav-link" href="{% url 'login' %}">Войти</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" href="{% url 'register' %}">Register</a>
+            <a class="nav-link" href="{% url 'register' %}">Зарегистрироваться</a>
         </li>
         {% endif %}
     </ul>
@@ -67,7 +75,7 @@
 
     <footer class="p-3 mt-5 border-top bg-light">
         <div class="container">
-            <p class="text-center">© 2023 Newspaper. All rights reserved.</p>
+            <p class="text-center">© 2023 Newspaper. Все права защищены.</p>
         </div>
     </footer>
 
