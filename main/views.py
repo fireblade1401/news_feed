@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
 from django.views.generic import UpdateView, DeleteView
-from .models import Article, Category
+from .models import Article, Category, Likes
 from django.contrib.auth.decorators import login_required
 from .forms import ArticleForm, CategoryForm, TagForm, CommentForm
-from django.http import Http404, HttpResponseRedirect
+from django.http import Http404, HttpResponseRedirect, JsonResponse
 
 
 def index(request):
@@ -145,10 +146,13 @@ def add_comment(request, article_id):
 def like_article(request, article_id):
     article = Article.objects.get(pk=article_id)
     user = request.user
+    existing_like = Likes.objects.filter(who_likes=user, article=article).first()
 
-    if user in article.likes.all():
-        article.likes.remove(user)
+    if existing_like:
+        existing_like.delete()
     else:
-        article.likes.add(user)
+        new_like = Likes(who_likes=user, article=article, count_of_likes=1)
+        new_like.save()
 
-    return HttpResponseRedirect(request.META['HTTP_REFERER'])
+    return HttpResponseRedirect(reverse('article_detail', args=[article_id]))
+

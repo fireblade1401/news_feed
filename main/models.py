@@ -1,8 +1,6 @@
 from django.urls import reverse
 from django.db import models
-from django.contrib.auth.models import User
 from accounts.models import CustomUser
-from News.settings import AUTH_USER_MODEL
 
 
 class Author(models.Model):
@@ -52,7 +50,6 @@ class Article(models.Model):
     category = models.ForeignKey(Category, on_delete=models.PROTECT)
     image_url = models.ImageField(upload_to='media', blank=True)
     tags = models.ManyToManyField(Tags)
-    likes = models.ManyToManyField(CustomUser, related_name='liked_articles', blank=True)
 
     def get_absolute_url(self):
         return reverse('article_detail', args=[str(self.id)])
@@ -64,6 +61,16 @@ class Article(models.Model):
         ordering = ['-published_date']
         verbose_name = 'Пост'
         verbose_name_plural = 'Посты'
+
+
+class Likes(models.Model):
+    who_likes = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='article_likes')
+    count_of_likes = models.PositiveSmallIntegerField(default=0)
+    when_liked = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.who_likes} {self.when_liked}"
 
 
 class Comments(models.Model):
@@ -78,5 +85,3 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
-
-

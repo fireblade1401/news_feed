@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% block title %} Detail article {% endblock %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <link rel="icon" href="{% static 'favicon.png' %}" type="image/x-icon">
     {% block content %}
     <div class="container">
@@ -75,15 +76,21 @@
                 {% endfor %}
                 <div class="d-flex justify-content-between mb-2">
                     <div class="likes-section">
-                        <a href="{% url 'like_article' article.id %}" class="like-button">
-                            <img src="{% static 'heart-regular.svg' %}" alt="Like" style="margin-bottom: 3px;">
-                            <span class="like-count">{{ article.likes.count }}</span> Нравится
+                        <a id="like-button" href="{% url 'like_article' article.id %}" class="like-button">
+                            {% if when_liked %}
+                                <img src="{% static 'heart-solid.svg' %}" alt="Liked" style="margin-bottom: 3px;">
+                            {% else %}
+                                <img src="{% static 'heart-regular.svg' %}" alt="Like" style="margin-bottom: 3px;">
+                            {% endif %}
+                            <span id="like-count" class="like-count">{{ article.article_likes.count }}</span> Нравится
                         </a>
                     </div>
+                    {% if user == article.author.user %}
                     <div>
                         <a href="{% url 'news_update' article.id %}" class="btn btn-warning me-2">Изменить пост</a>
                         <a href="{% url 'news_delete' article.id %}" class="btn btn-danger">Удалить пост</a>
                     </div>
+                    {% endif %}
                 </div>
 
             <div class="comments mt-5">
@@ -114,6 +121,7 @@
         </div>
     </div>
 </div>
+
 {% endblock %}
 
-    {% block footer %} {% endblock %}
+{% block footer %} {% endblock %}

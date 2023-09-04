@@ -19,5 +19,5 @@ urlpatterns = [
     path('add_comment/<int:article_id>/', views.add_comment, name='add_comment'),
     path('update/<int:pk>/', ArticleUpdateView, name="news_update"),
     path('delete/<int:pk>/', ArticleDeleteView, name="news_delete"),
-    path('like_article/<int:article_id>/', views.like_article, name='like_article')
+    path('like_article/<int:article_id>/', views.like_article, name='like_article'),
 ]
