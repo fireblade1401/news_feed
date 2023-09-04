@@ -18,6 +18,13 @@ class Author(models.Model):
         verbose_name_plural = 'Авторы'
 
 
+class Ip(models.Model):
+    ip = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.ip
+
+
 class Category(models.Model):
     category_name = models.CharField(max_length=255)
     description = models.CharField(max_length=255)
@@ -51,6 +58,10 @@ class Article(models.Model):
     image_url = models.ImageField(upload_to='media', blank=True)
     tags = models.ManyToManyField(Tags)
 
+    @property
+    def count_like(self):
+        return self.article_likes.all().count()
+
     def get_absolute_url(self):
         return reverse('article_detail', args=[str(self.id)])
 
@@ -70,7 +81,11 @@ class Likes(models.Model):
     when_liked = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"{self.who_likes} {self.when_liked}"
+        return f"{self.who_likes} лайкнул: {str(self.article)}"
+
+    class Meta:
+        verbose_name = 'Лайки'
+        verbose_name_plural = 'Лайков'
 
 
 class Comments(models.Model):
@@ -85,3 +100,15 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+
+class PageHit(models.Model):
+    article = models.OneToOneField(Article, on_delete=models.CASCADE, related_name='page_hit')
+    count = models.PositiveIntegerField(default=0)
+
+    def __str__(self):
+        return str(self.article)
+
+    class Meta:
+        verbose_name = 'Просмотры'
+        verbose_name_plural = 'Просмотров'

@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import UpdateView, DeleteView
-from .models import Article, Category, Likes
+from .models import Article, Category, Likes, Comments, PageHit
 from django.contrib.auth.decorators import login_required
 from .forms import ArticleForm, CategoryForm, TagForm, CommentForm
 from django.http import Http404, HttpResponseRedirect, JsonResponse
@@ -42,6 +42,12 @@ def get_article_by_tag(request, tag_id):
 def detail_article(request, article_id):
     article = get_object_or_404(Article, id=article_id)
 
+    page_hit, created = PageHit.objects.get_or_create(article=article)
+    page_hit.count += 1
+    page_hit.save()
+
+    user_has_liked = Likes.objects.filter(who_likes=request.user, article=article).exists()
+
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
@@ -56,6 +62,8 @@ def detail_article(request, article_id):
     context = {
         'article': article,
         'form': form,
+        'user_has_liked': user_has_liked,
+        'page_hit': page_hit,
     }
 
     return render(request, 'main/detail_article.html', context)
@@ -142,17 +150,31 @@ def add_comment(request, article_id):
     return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
 
 
+def delete_comment(request, comment_id):
+    print("Inside delete_comment function")
+    comment = get_object_or_404(Comments, id=comment_id)
+    print(f"Found comment: {comment}")
+    if request.user.author == comment.user:
+        print("User matches, deleting comment")
+        comment.delete()
+        print("Comment deleted")
+
+    return redirect(request.META.get('HTTP_REFERER', 'redirect_if_referer_not_found'))
+
+
 @login_required
 def like_article(request, article_id):
     article = Article.objects.get(pk=article_id)
-    user = request.user
-    existing_like = Likes.objects.filter(who_likes=user, article=article).first()
+    user_has_liked = Likes.objects.filter(who_likes=request.user, article=article).exists()
+    existing_like = Likes.objects.filter(who_likes=request.user, article=article).first()
 
-    if existing_like:
+    if user_has_liked:
         existing_like.delete()
     else:
-        new_like = Likes(who_likes=user, article=article, count_of_likes=1)
+        new_like = Likes(who_likes=request.user, article=article, count_of_likes=1)
         new_like.save()
 
     return HttpResponseRedirect(reverse('article_detail', args=[article_id]))
+
+
 

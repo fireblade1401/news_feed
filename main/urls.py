@@ -20,4 +20,5 @@ urlpatterns = [
     path('update/<int:pk>/', ArticleUpdateView, name="news_update"),
     path('delete/<int:pk>/', ArticleDeleteView, name="news_delete"),
     path('like_article/<int:article_id>/', views.like_article, name='like_article'),
+    path('delete_comment/<int:comment_id>/', views.delete_comment, name="delete_comment"),
 ]
