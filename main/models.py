@@ -93,6 +93,7 @@ class Comments(models.Model):
     article = models.ForeignKey(Article, on_delete=models.CASCADE)
     text = models.TextField()
     created_date = models.DateTimeField(auto_now_add=True)
+    parent_comment = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.text
@@ -100,6 +101,20 @@ class Comments(models.Model):
     class Meta:
         verbose_name = 'Комментарий'
         verbose_name_plural = 'Комментарии'
+
+
+class CommentLikes(models.Model):
+    who_likes = models.ForeignKey(CustomUser, on_delete=models.SET_NULL, null=True)
+    comment = models.ForeignKey(Comments, on_delete=models.CASCADE, related_name='comment_likes')
+    count_of_likes = models.PositiveSmallIntegerField(default=0)
+    when_liked = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.who_likes} лайкнул комментарий: {str(self.comment)}"
+
+    class Meta:
+        verbose_name = 'Лайки комментариев'
+        verbose_name_plural = 'Лайк комментария'
 
 
 class PageHit(models.Model):

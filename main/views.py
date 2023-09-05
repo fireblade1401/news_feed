@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import UpdateView, DeleteView
-from .models import Article, Category, Likes, Comments, PageHit
+from .models import Article, Category, Likes, Comments, PageHit, CommentLikes
 from django.contrib.auth.decorators import login_required
 from .forms import ArticleForm, CategoryForm, TagForm, CommentForm
 from django.http import Http404, HttpResponseRedirect, JsonResponse
@@ -120,14 +120,12 @@ def add_tag(request):
     return render(request, 'main/add_tag.html', context)
 
 
-@login_required
 class ArticleUpdateView(UpdateView):
     model = Article
     template_name = 'main/edit_article.html'
     form_class = ArticleForm
 
 
-@login_required
 class ArticleDeleteView(DeleteView):
     model = Article
     success_url = '/'
@@ -176,5 +174,19 @@ def like_article(request, article_id):
 
     return HttpResponseRedirect(reverse('article_detail', args=[article_id]))
 
+
+@login_required
+def like_comment(request, comment_id):
+    comment = Comments.objects.get(pk=comment_id)
+    user_has_liked = CommentLikes.objects.filter(who_likes=request.user, comment=comment).exists()
+    existing_like = CommentLikes.objects.filter(who_likes=request.user, comment=comment).first()
+
+    if user_has_liked:
+        existing_like.delete()
+    else:
+        new_like = CommentLikes(who_likes=request.user, comment=comment, count_of_likes=1)
+        new_like.save()
+
+    return HttpResponseRedirect(reverse('article_detail', args=[comment.article.id]))
 
 

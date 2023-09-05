@@ -88,48 +88,65 @@
                             <span id="like-count" class="like-count">{{ article.article_likes.count }}</span> Нравится
                         </a>
                     </div>
+                    
                     {% if user == article.author.user %}
                     <div>
-                        <a href="{% url 'news_update' article.id %}" class="btn btn-warning me-2">Изменить пост</a>
-                        <a href="{% url 'news_delete' article.id %}" class="btn btn-danger">Удалить пост</a>
+                        <a href="{% url 'update_article' article.id %}" class="btn btn-warning me-2">Изменить пост</a>
+                        <a href="{% url 'delete_article' article.id %}" class="btn btn-danger">Удалить пост</a>
                     </div>
                     {% endif %}
                 </div>
-
-            <div class="comments mt-5">
-                <h3>Комментарии:</h3>
-                {% for comment in article.comments_set.all %}
-                    <div class="card mb-4 shadow-sm">
-                        <div class="card-header py-3">
-                            <h5 class="m-0">{{ comment.user }}</h5>
+                <div class="comments mt-5">
+                    <h3>Комментарии:</h3>
+                    {% for comment in article.comments_set.all %}
+                        <div class="card mb-4 shadow-sm">
+                            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                                <h5 class="m-0">{{ comment.user }}</h5>
+                                <div class="likes-section">
+                                    <a id="like-button-{{ comment.id }}" href="{% url 'like_comment' comment.id %}" class="like-button">
+                                        <img src="{% if comment.user_has_liked %}{% static 'heart-solid.svg' %}
+                                                {% else %}{% static 'heart-regular.svg' %}{% endif %}"
+                                             alt="Like" style="margin-bottom: 3px;">
+                                        <span id="like-count-{{ comment.id }}" class="like-count">
+                                            {% if comment.comment_likes.count > 0 %}
+                                                {{ comment.comment_likes.count }}
+                                            {% endif %}
+                                        </span> Нравится
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="card-body">
+                                <p class="card-text">{{ comment.text }}</p>
+                            </div>
+                            {% if request.user.author == comment.user %}
+                                <div class="card-footer">
+                                    <form action="{% url 'delete_comment' comment.id %}" method="POST">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-danger">Delete</button>
+                                    </form>
+                                </div>
+                            {% endif %}
                         </div>
-                        <div class="card-body">
-                            <p class="card-text">{{ comment.text }}</p>
-                        </div>
-                        {% if request.user.author == comment.user %}
-                            <form action="{% url 'delete_comment' comment.id %}" method="POST">
-                                {% csrf_token %}
-                                <button type="submit" class="btn btn-danger">Delete</button>
-                            </form>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </div>
+                    {% endfor %}
+                </div>
 
-            <!-- Форма для ввода комментария -->
-            <div class="add-comment mt-5">
-                <h3>Добавить комментарий:</h3>
-                <form method="post" class="form-group">
-                    {% csrf_token %}
-                    <div class="input-group mb-3">
-                        <textarea class="form-control" rows="3" id="comment-text" name="text" aria-label="With textarea"></textarea>
-                    </div>
-                    <button type="submit" class="btn btn-primary btn-lg btn-block">Комментировать</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+
+                <div class="add-comment mt-5">
+                    <h3>Добавить комментарий:</h3>
+                    <form method="post" class="form-group">
+                        {% csrf_token %}
+                        <div class="input-group mb-3">
+                            <textarea class="form-control" rows="3" id="comment-text" name="text" aria-label="With textarea"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">Комментировать</button>
+                    </form>
+                </div>
+
+                <!-- Добавленная кнопка для возвращения на главную страницу -->
+                <div class="mt-5">
+                    <a href="/" class="btn btn-secondary btn-lg btn-block">Вернуться на главную</a>
+                </div>
+
 
 {% endblock %}
 

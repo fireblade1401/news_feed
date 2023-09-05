@@ -15,7 +15,10 @@
                 <input type="{{ field.field.widget.input_type }}" name="{{ field.name }}" class="form-control" id="{{ field.id_for_label }}" {% if field.value %}value="{{ field.value }}"{% endif %}>
             </div>
             {% endfor %}
-            <button type="submit" class="btn btn-primary" style="width: 100%;">Добавить</button>
+            <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;">Добавить</button>
+            <div class="d-flex justify-content-center" style="padding-top: 20px">
+                <a href="/" class="btn btn-secondary btn-lg">Вернуться на главную</a>
+            </div>
         </form>
     </div>
 </div>
